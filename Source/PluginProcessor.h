@@ -32,7 +32,7 @@ public:
 
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
-    bool hasEditor() const override;
+    bool hasEditor() const override; 
 
     //==============================================================================
     const juce::String getName() const override;
@@ -56,7 +56,7 @@ public:
     //initialising the apvts so that a GUI can be used for with sliders, knobs etc. 
 
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
-    juce::AudioProcessorValueTreeState apvts {*this, nullptr, "Parameters", createParameterLayout()}
+    juce::AudioProcessorValueTreeState apvts{ *this, nullptr, "Parameters", createParameterLayout() };
 
 private:
     //==============================================================================

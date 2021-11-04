@@ -231,7 +231,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout EQAudioProcessor::createPara
     layout.add(std::make_unique <juce::AudioParameterChoice>("LowCut SLope", "Lowcut Slope", stringArray, 0));
     layout.add(std::make_unique <juce::AudioParameterChoice>("HighCut SLope", "Highcut Slope", stringArray, 0));
     
-
+    return layout;
 }
 //==============================================================================
 // This creates new instances of the plugin..
