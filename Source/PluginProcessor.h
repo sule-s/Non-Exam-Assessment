@@ -60,13 +60,13 @@ public:
     
     //creating variables for QoL 
 private:
-    using Filter = juce::dsp::IIR::Filter<float>; //sLOPE OF cut filtewrs are multiples of 12dB/Oct and filters defaults at 12dB/Oct, but we want up to 48 dB/Oct
+    using Filter = juce::dsp::IIR::Filter<float>; //slope of cut filters are multiples of 12dB/Oct and filters defaults at 12dB/Oct, but we want up to 48 dB/Oct
 
-    using CutFilter = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>; // 12 dB/Oct * 4 = 48dB/Oct 
+    using Cut = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>; // 12 dB/Oct * 4 = 48dB/Oct 
 
-    using MonoChain = juce::dsp::ProcessorChain < CutFilter, Filter, CutFilter>; // initiating LowCut, Parametric Band, High Cut
+    using SingleChain = juce::dsp::ProcessorChain < Cut, Filter, Cut>; // initiating LowCut, Parametric Band, High Cut
 
-    MonoChain leftChain, rightChain; //dsp defaults as mono instead of stereo, so making to channels to create stereo sound manipulation
+    SingleChain leftChain, rightChain; //dsp defaults as mono instead of stereo, so creating two channels results in stereo sound 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EQAudioProcessor)
 };
