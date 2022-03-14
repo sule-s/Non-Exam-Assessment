@@ -10,6 +10,16 @@
 
 #include <JuceHeader.h>
 
+//creating a structure so that the apvts can pull these values every time it is called, rather than having to write them out over and over.
+struct ChainSettings
+{
+    int lowcutSlope{ 0 }, highcutSlope{ 0 };
+    float peakFreq{ 0 }, peakGain{ 0 }, peakQuality{ 1.f };
+    float lowcutFreq{ 0 }, highcutFreq{ 0 };
+    
+};
+
+ChainSettings getChainSettings(juce::AudioProcessorValueTreeState& apvts);
 //==============================================================================
 /**
 */
@@ -61,12 +71,12 @@ public:
     //creating variables for QoL 
 private:
     using Filter = juce::dsp::IIR::Filter<float>; //slope of cut filters are multiples of 12dB/Oct and filters defaults at 12dB/Oct, but we want up to 48 dB/Oct
-
+                                                  //COULD USE STATEVARIABLEFILTER, but allows for single channel manuipulation
     using Cut = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>; // 12 dB/Oct * 4 = 48dB/Oct 
 
-    using SingleChain = juce::dsp::ProcessorChain < Cut, Filter, Cut>; // initiating LowCut, Parametric Band, High Cut
+    using StereoChain = juce::dsp::ProcessorChain < Cut, Filter, Cut>; // initiating LowCut, Parametric Band, High Cut
 
-    SingleChain leftChain, rightChain; //dsp defaults as mono instead of stereo, so creating two channels results in stereo sound 
+    StereoChain leftChain, rightChain; //dsp defaults as mono instead of stereo, so creating two channels results in stereo sound 
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EQAudioProcessor)
 };
