@@ -179,6 +179,21 @@ void EQAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mid
     //in order to run audio via the links in the chain.
     //Processing contexts needs to be supplied by Audioblock instances. 
 
+
+    // this code must be implemented in processBlock AS WELL as prepareToPlay
+    // so that the filter can be updated with the new coefficients when the user changes 
+    // the desired frequency.
+    auto chainsettings = getchainsettings(apvts);
+
+    auto peakcoefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(getSampleRate(), chainsettings.peakFreq,
+        chainsettings.peakQuality,
+        juce::Decibels::decibelsToGain(chainsettings.peakGain) 
+    );
+
+    *leftChain.get<link::peak>().coefficients = *peakcoefficients;
+    *rightChain.get<link::peak>().coefficients = *peakcoefficients;
+
+
     juce::dsp::AudioBlock<float> block(buffer);
 
     auto leftBlock = block.getSingleChannelBlock(0);
