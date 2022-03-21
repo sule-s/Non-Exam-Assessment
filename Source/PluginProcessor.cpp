@@ -106,6 +106,27 @@ void EQAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 
     leftChain.prepare(spec);
     rightChain.prepare(spec);
+
+    auto chainsettings = getchainsettings(apvts);
+    
+
+    // IIR or Infinite-Duration Impulse Response Filters uses a feedback mechanism where the previous output,
+    //in conjunction with the present and past input,
+    //is given as the present input.
+
+    //coefficients for the peak filter:
+
+    auto peakcoefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate,
+        chainsettings.peakFreq, 
+        chainsettings.peakQuality,
+        juce::Decibels::decibelsToGain(chainsettings.peakGain) //peakGain is auto in dB,
+    );
+
+    //set the filter's coefficients accordingly:
+    //IIR functions return instances on the heap, rather than in the actual audio buffer.
+    // To access these, you must dereference them
+    *leftChain.get<link::peak>().coefficients = *peakcoefficients; //*= deref.
+    *rightChain.get<link::peak>().coefficients = *peakcoefficients; //*= deref.
 }
 
 void EQAudioProcessor::releaseResources()
@@ -183,7 +204,7 @@ juce::AudioProcessorEditor* EQAudioProcessor::createEditor()
 }
 
 //==============================================================================
-void EQAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void EQAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
@@ -196,17 +217,6 @@ void EQAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
     // whose contents will have been created by the getStateInformation() call.
 }
 
-ChainSettings getChainSettings(juce::AudioProcessorValueTreeState& apvts)
-{
-    ChainSettings settings;
-    apvts.getRawParameterValue("lowcutFreq")->load();
-    apvts.getRawParameterValue("highcutFreq")->load();
-    apvts.getRawParameterValue("peakFreq")->load();
-    apvts.getRawParameterValue("peakGain")->load();
-    apvts.getRawParameterValue("peakQuality")->load();
-    apvts.getRawParameterValue("lowcutSlope ")->load();
-    apvts.getRawParameterValue("highcutSlope")->load();
-}
 
 
 
@@ -251,9 +261,24 @@ juce::AudioProcessorValueTreeState::ParameterLayout EQAudioProcessor::createPara
     
     return layout;
 }
+
+chainsettings getchainsettings(juce::AudioProcessorValueTreeState& apvts)
+{
+    chainsettings settings;
+    apvts.getRawParameterValue("lowcutFreq")->load();
+    apvts.getRawParameterValue("highcutFreq")->load();
+    apvts.getRawParameterValue("peakFreq")->load();
+    apvts.getRawParameterValue("peakGain")->load(); // in decibels
+    apvts.getRawParameterValue("peakQuality")->load();
+    apvts.getRawParameterValue("lowcutSlope ")->load();
+    apvts.getRawParameterValue("highcutSlope")->load();
+}
+
 //==============================================================================
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new EQAudioProcessor();
 }
+
+
