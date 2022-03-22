@@ -1,8 +1,6 @@
 /*
   ==============================================================================
-
     This file contains the basic framework code for a JUCE plugin editor.
-
   ==============================================================================
 */
 
@@ -10,12 +8,12 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-EQAudioProcessorEditor::EQAudioProcessorEditor (EQAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+EQAudioProcessorEditor::EQAudioProcessorEditor(EQAudioProcessor& p)
+    : AudioProcessorEditor(&p), audioProcessor(p)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (400, 300);
+    setSize(400, 300);
 }
 
 EQAudioProcessorEditor::~EQAudioProcessorEditor()
@@ -23,14 +21,14 @@ EQAudioProcessorEditor::~EQAudioProcessorEditor()
 }
 
 //==============================================================================
-void EQAudioProcessorEditor::paint (juce::Graphics& g)
+void EQAudioProcessorEditor::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
+    g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
 
-    g.setColour (juce::Colours::white);
-    g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
+    g.setColour(juce::Colours::white);
+    g.setFont(15.0f);
+    g.drawFittedText("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void EQAudioProcessorEditor::resized()

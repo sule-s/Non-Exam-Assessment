@@ -1,11 +1,8 @@
 /*
   ==============================================================================
-
     This file contains the basic framework code for a JUCE plugin processor.
-
   ==============================================================================
 */
-
 #pragma once
 
 #include <JuceHeader.h>
@@ -13,74 +10,70 @@
 //creating a structure so that the apvts can pull these values every time it is called, rather than having to write them out over and over.
 struct chainsettings
 {
-    int lowcutSlope{ 0 }, highcutSlope{ 0 };
     float peakFreq{ 0 }, peakGain{ 0 }, peakQuality{ 1.f };
-    float lowcutFreq{ 0 }, highcutFreq{ 0 };
-    
+    float lowCutFreq{ 0 }, highCutFreq{ 0 };
+    int lowCutSlope{ 0 }, highCutSlope{ 0 };
 };
 
 chainsettings getchainsettings(juce::AudioProcessorValueTreeState& apvts);
+
 //==============================================================================
 /**
 */
-class EQAudioProcessor  : public juce::AudioProcessor
+class EQAudioProcessor : public juce::AudioProcessor
 {
 public:
     //==============================================================================
     EQAudioProcessor();
     ~EQAudioProcessor() override;
-
     //==============================================================================
-    void prepareToPlay (double sampleRate, int samplesPerBlock) override;
+    void prepareToPlay(double sampleRate, int samplesPerBlock) override;
     void releaseResources() override;
-
-   #ifndef JucePlugin_PreferredChannelConfigurations
-    bool isBusesLayoutSupported (const BusesLayout& layouts) const override;
-   #endif
-
-    void processBlock (juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
-
+#ifndef JucePlugin_PreferredChannelConfigurations
+    bool isBusesLayoutSupported(const BusesLayout& layouts) const override;
+#endif
+    void processBlock(juce::AudioBuffer<float>&, juce::MidiBuffer&) override;
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
-    bool hasEditor() const override; 
-
+    bool hasEditor() const override;
     //==============================================================================
     const juce::String getName() const override;
-
     bool acceptsMidi() const override;
     bool producesMidi() const override;
     bool isMidiEffect() const override;
     double getTailLengthSeconds() const override;
-
     //==============================================================================
     int getNumPrograms() override;
     int getCurrentProgram() override;
-    void setCurrentProgram (int index) override;
-    const juce::String getProgramName (int index) override;
-    void changeProgramName (int index, const juce::String& newName) override;
-
+    void setCurrentProgram(int index) override;
+    const juce::String getProgramName(int index) override;
+    void changeProgramName(int index, const juce::String& newName) override;
     //==============================================================================
-    void getStateInformation (juce::MemoryBlock& destData) override;
-    void setStateInformation (const void* data, int sizeInBytes) override;
-
-    //initialising the apvts so that a GUI can be used for with sliders, knobs etc. 
-
+    void getStateInformation(juce::MemoryBlock& destData) override;
+    void setStateInformation(const void* data, int sizeInBytes) override;
     static juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout();
     juce::AudioProcessorValueTreeState apvts{ *this, nullptr, "Parameters", createParameterLayout() };
-    
-    //creating variables for QoL 
+
+    //slope of cut filters are multiples of 12dB/Oct and filters defaults at 12dB/Oct, but we want up to 48 dB/Oct
+
 private:
-    using Filter = juce::dsp::IIR::Filter<float>; //slope of cut filters are multiples of 12dB/Oct and filters defaults at 12dB/Oct, but we want up to 48 dB/Oct
-                                                  //COULD USE STATEVARIABLEFILTER, but allows for single channel manuipulation
-    using variableCut = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>; // 12 dB/Oct * 4 = 48dB/Oct 
+    using Filter = juce::dsp::IIR::Filter<float>;
 
-    using singleChain = juce::dsp::ProcessorChain < variableCut, Filter, variableCut>; // initiating LowCut, Parametric Band, High Cut
+    using CutFilter = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>; // 12 dB/Oct * 4 = 48dB/Oct
 
-    singleChain leftChain, rightChain; //dsp defaults as mono instead of stereo, so creating a left and right channel
-                                       //to play concurrently will result in stereo sound
+    using MonoChain = juce::dsp::ProcessorChain<CutFilter, Filter, CutFilter>;
+    //dsp defaults as mono instead of stereo, so creating a left and right channel
+    //to play concurrently will result in stereo sound
 
-    enum link //used to store a set of constants for the filter's coefficients.
-    {lowCut,peak,highCut}; //corresponds with stereochain lowcut, peak band and highcut.
+    MonoChain leftChain, rightChain;
+
+
+    //used to store a set of constants that can be called for the filter's coefficients.//used to store a set of constants that can be called for the filter's coefficients.
+    //corresponds with stereochain lowcut, peak band and highcut.
+    enum chainposition
+    {
+        LowCut, Peak, HighCut
+    };
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (EQAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EQAudioProcessor)
 };
