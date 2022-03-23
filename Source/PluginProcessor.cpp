@@ -91,7 +91,7 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     leftChain.prepare(spec);
     rightChain.prepare(spec);
 
-    auto chainSettings = getchainsettings(apvts);
+    auto getchainSettings = getchainsettings(apvts);
 
     // IIR or Infinite-Duration Impulse Response Filters uses a feedback mechanism where the previous output,
     //in conjunction with the present and past input,
@@ -99,7 +99,7 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 
     //coefficients for the peak filter:
 
-    auto peakCoefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, chainSettings.peakFreq, chainSettings.peakQuality, juce::Decibels::decibelsToGain(chainSettings.peakGain));
+    auto peakCoefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(sampleRate, getchainSettings.peakFreq, getchainSettings.peakQuality, juce::Decibels::decibelsToGain(getchainSettings.peakGain));
 
     //set the filter's coefficients accordingly:
     //IIR functions return instances on the heap, rather than in the actual audio buffer.
@@ -151,21 +151,20 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear(i, 0, buffer.getNumSamples());
 
-    //A Processerchain needs processing context to be passed through it
-    //in order to run audio via the links in the chain.
-    //Processing contexts needs to be supplied by Audioblock instances. 
-
-
     // this code must be implemented in processBlock AS WELL as prepareToPlay
     // so that the filter can be updated with the new coefficients when the user changes 
     // the desired frequency. 
 
-    auto chainSettings = getchainsettings(apvts);
+    auto getchainSettings = getchainsettings(apvts);
 
-    auto peakCoefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(getSampleRate(), chainSettings.peakFreq, chainSettings.peakQuality, juce::Decibels::decibelsToGain(chainSettings.peakGain));
+    auto peakCoefficients = juce::dsp::IIR::Coefficients<float>::makePeakFilter(getSampleRate(), getchainSettings.peakFreq, getchainSettings.peakQuality, juce::Decibels::decibelsToGain(getchainSettings.peakGain));
 
-    *leftChain.get<chainposition::Peak>().coefficients = *peakCoefficients;
-    *rightChain.get<chainposition::Peak>().coefficients = *peakCoefficients;
+    //A Processerchain needs processing context to be passed through it
+    //in order to run audio via the links in the chain.
+    //Processing contexts needs to be supplied by Audioblock instances. 
+
+    *leftChain.get<chainposition::Peak>().coefficients = *peakCoefficients; //as therse are references, they point to the adresses of variables.
+    *rightChain.get<chainposition::Peak>().coefficients = *peakCoefficients;// to get the data in these variables, we must dereference them.
 
     juce::dsp::AudioBlock<float> block(buffer);
 
@@ -228,23 +227,23 @@ juce::AudioProcessorValueTreeState::ParameterLayout EQAudioProcessor::createPara
     //LowCut Frquency
 
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("lowcutFreq", "lowcutFreq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 0.25f), 20.f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("lowcutFreq", "LowCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 0.25f), 20.f));
 
     //HighCut Frquency
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("highcutFreq", "highcutFreq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 0.25f), 20000.f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("highcutFreq", "HighCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 0.25f), 20000.f));
 
     //Parametric Peak
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("PeakFreq", "PeakFreq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 0.25f), 750.f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("PeakFreq", "Peak Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 0.25f), 750.f));
 
     //Peak Gain
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("peakGain", "peakGain", juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("peakGain", "Peak Gain", juce::NormalisableRange<float>(-24.f, 24.f, 0.5f, 1.f), 0.0f));
 
     //Peak Quality (How wide / narrow the peak is)
 
-    layout.add(std::make_unique<juce::AudioParameterFloat>("peakQuality", "peakQuality", juce::NormalisableRange<float>(0.1f, 10.f, 0.05f, 1.f), 1.f));
+    layout.add(std::make_unique<juce::AudioParameterFloat>("peakQuality", "Peak Quality", juce::NormalisableRange<float>(0.1f, 10.f, 0.05f, 1.f), 1.f));
 
     // stringArray dropdown table
 
@@ -257,8 +256,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout EQAudioProcessor::createPara
         stringArray.add(str);
     }
 
-    layout.add(std::make_unique<juce::AudioParameterChoice>("lowcutSlope", "lowcutSlope", stringArray, 0));
-    layout.add(std::make_unique<juce::AudioParameterChoice>("highcutSlope", "highcutSlope", stringArray, 0));
+    layout.add(std::make_unique<juce::AudioParameterChoice>("lowcutSlope", "LowCut Slope", stringArray, 0));
+    layout.add(std::make_unique<juce::AudioParameterChoice>("highcutSlope", "HighCut Slope", stringArray, 0));
 
     return layout;
 }
@@ -267,4 +266,4 @@ juce::AudioProcessorValueTreeState::ParameterLayout EQAudioProcessor::createPara
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new EQAudioProcessor();
-}
+}z

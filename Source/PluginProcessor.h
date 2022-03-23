@@ -59,13 +59,13 @@ public:
 private:
     using Filter = juce::dsp::IIR::Filter<float>;
 
-    using CutFilter = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>; // 12 dB/Oct * 4 = 48dB/Oct
+    using VariableCut = juce::dsp::ProcessorChain<Filter, Filter, Filter, Filter>; // 12 dB/Oct * 4 = 48dB/Oct
 
-    using MonoChain = juce::dsp::ProcessorChain<CutFilter, Filter, CutFilter>;
+    using SingleChain = juce::dsp::ProcessorChain<VariableCut, Filter, VariableCut>;
     //dsp defaults as mono instead of stereo, so creating a left and right channel
     //to play concurrently will result in stereo sound
 
-    MonoChain leftChain, rightChain;
+    SingleChain leftChain, rightChain;
 
 
     //used to store a set of constants that can be called for the filter's coefficients.//used to store a set of constants that can be called for the filter's coefficients.
