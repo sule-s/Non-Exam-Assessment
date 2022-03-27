@@ -68,8 +68,7 @@ private:
     SingleChain leftChain, rightChain;
 
 
-    //used to store a set of constants that can be called for the filter's coefficients.//used to store a set of constants that can be called for the filter's coefficients.
-    //corresponds with stereochain lowcut, peak band and highcut.
+    //used to store a set of constants that can be called for the filter's coefficients.
     enum chainposition
     {
         LowCut, Peak, HighCut

@@ -80,16 +80,16 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     // pass a process spec object to both the left and right chain, this will be passed to each link in the chain
     // this prepares each chain to be prepared for processing 
 
-    juce::dsp::ProcessSpec spec;
+    juce::dsp::ProcessSpec shem;
 
-    spec.maximumBlockSize = samplesPerBlock;
+    shem.maximumBlockSize = samplesPerBlock;
 
-    spec.numChannels = 1;
+    shem.numChannels = 1;
 
-    spec.sampleRate = sampleRate;
+    shem.sampleRate = sampleRate;
 
-    leftChain.prepare(spec);
-    rightChain.prepare(spec);
+    leftChain.prepare(shem);
+    rightChain.prepare(shem);
 
     auto getchainSettings = getchainsettings(apvts);
 
@@ -171,14 +171,14 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     auto leftBlock = block.getSingleChannelBlock(0);
     auto rightBlock = block.getSingleChannelBlock(1);
 
-    juce::dsp::ProcessContextReplacing<float> leftContext(leftBlock);
-    juce::dsp::ProcessContextReplacing<float> rightContext(rightBlock);
+    juce::dsp::ProcessContextReplacing<float> leftContextReplacing(leftBlock);
+    juce::dsp::ProcessContextReplacing<float> rightContextReplacing(rightBlock);
 
-    leftChain.process(leftContext);
-    rightChain.process(rightContext);
+    leftChain.process(leftContextReplacing);
+    rightChain.process(rightContextReplacing);
 
 
-
+    
 }
 //==============================================================================
 bool EQAudioProcessor::hasEditor() const
@@ -205,7 +205,7 @@ void EQAudioProcessor::setStateInformation(const void* data, int sizeInBytes)
 
 chainsettings getchainsettings(juce::AudioProcessorValueTreeState& apvts)
 {
-    chainsettings settings;
+    chainsettings settings; // denormalises the values of each parameter so that we can get the real-world values
 
     settings.lowCutFreq = apvts.getRawParameterValue("lowcutFreq")->load();
     settings.highCutFreq = apvts.getRawParameterValue("highcutFreq")->load();
@@ -224,12 +224,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout EQAudioProcessor::createPara
 
     //RangeStart,RangeEnd,Interval, SkewFactor
 
-    //LowCut Frquency
-
+    //LowCut Frequency
 
     layout.add(std::make_unique<juce::AudioParameterFloat>("lowcutFreq", "LowCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 0.25f), 20.f));
 
-    //HighCut Frquency
+    //HighCut Frequency
 
     layout.add(std::make_unique<juce::AudioParameterFloat>("highcutFreq", "HighCut Freq", juce::NormalisableRange<float>(20.f, 20000.f, 1.f, 0.25f), 20000.f));
 
@@ -248,12 +247,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout EQAudioProcessor::createPara
     // stringArray dropdown table
 
     juce::StringArray stringArray;
-    for (int i = 0; i < 4; ++i)
+    for (int i = 0; i < 4; ++i) // I IN RANGE 1 TO 4, INTERVAL OF 1
     {
-        juce::String str;
-        str << (12 + i * 12);
-        str << " db/Oct";
-        stringArray.add(str);
+        juce::String str; str << (12 + i * 12); str << " dB/Oct"; stringArray.add(str);
     }
 
     layout.add(std::make_unique<juce::AudioParameterChoice>("lowcutSlope", "LowCut Slope", stringArray, 0));
@@ -266,4 +262,4 @@ juce::AudioProcessorValueTreeState::ParameterLayout EQAudioProcessor::createPara
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new EQAudioProcessor();
-}z
+}
