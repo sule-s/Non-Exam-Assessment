@@ -7,15 +7,26 @@
 
 #include <JuceHeader.h>
 
+std::integral_constant<int, 0> LowCut;
+std::integral_constant<int, 1> Peak;
+std::integral_constant<int, 2> HighCut;
+
+std::integral_constant<int, 0> Slope12;
+std::integral_constant<int, 1> Slope24;
+std::integral_constant<int, 2> Slope36;
+std::integral_constant<int, 3> Slope48;
+
 //creating a structure so that the apvts can pull these values every time it is called, rather than having to write them out over and over.
 struct chainsettings
 {
     float peakFreq{ 0 }, peakGain{ 0 }, peakQuality{ 1.f };
     float lowCutFreq{ 0 }, highCutFreq{ 0 };
-    int lowCutSlope{ 0 }, highCutSlope{ 0 };
+    int lowCutSlope{ Slope12 }, highCutSlope{ Slope12 };
 };
 
 chainsettings getchainsettings(juce::AudioProcessorValueTreeState& apvts);
+
+
 
 //==============================================================================
 /**
@@ -66,13 +77,9 @@ private:
     //to play concurrently will result in stereo sound
 
     SingleChain leftChain, rightChain;
+   
 
 
-    //used to store a set of constants that can be called for the filter's coefficients.
-    enum chainposition
-    {
-        LowCut, Peak, HighCut
-    };
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EQAudioProcessor)
 };

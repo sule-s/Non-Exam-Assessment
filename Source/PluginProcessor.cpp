@@ -105,13 +105,27 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     //IIR functions return instances on the heap, rather than in the actual audio buffer.
     // To access these, you must dereference them
 
-    *leftChain.get<chainposition::Peak>().coefficients = *peakCoefficients; //the star is used to deref.
-    *rightChain.get<chainposition::Peak>().coefficients = *peakCoefficients;
+    *leftChain.get<Peak>().coefficients = *peakCoefficients; //the star is used to deref.
+    *rightChain.get<Peak>().coefficients = *peakCoefficients;
+
+
+    // every 2 orders creates an IIRHighPass / LowCut filter
+    // so for x iterations of the filter we need 2x filters
+    //as the first slope choice starts from 0, we need 2x+1 filters
+    auto lowCutCoefficients = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(getchainSettings.lowCutFreq, sampleRate, (getchainSettings.lowCutSlope + 1)*2);
+
+    auto& leftLowCut = leftChain.get<LowCut>(); 
+
+    leftLowCut.setBypassed<0>(true);
+    leftLowCut.setBypassed<1>(true);
+    leftLowCut.setBypassed<2>(true);
+    leftLowCut.setBypassed<3>(true);
+
 }
 
 void EQAudioProcessor::releaseResources()
 {
-    // When playback stops, you can use this as an opportunity to free up any
+    // When playback stops,B you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -163,8 +177,8 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     //in order to run audio via the links in the chain.
     //Processing contexts needs to be supplied by Audioblock instances. 
 
-    *leftChain.get<chainposition::Peak>().coefficients = *peakCoefficients; //as therse are references, they point to the adresses of variables.
-    *rightChain.get<chainposition::Peak>().coefficients = *peakCoefficients;// to get the data in these variables, we must dereference them.
+    *leftChain.get<Peak>().coefficients = *peakCoefficients; //as therse are references, they point to the adresses of variables.
+    *rightChain.get<Peak>().coefficients = *peakCoefficients;// to get the data in these variables, we must dereference them.
 
     juce::dsp::AudioBlock<float> block(buffer);
 
@@ -212,7 +226,7 @@ chainsettings getchainsettings(juce::AudioProcessorValueTreeState& apvts)
     settings.peakFreq = apvts.getRawParameterValue("PeakFreq")->load();
     settings.peakGain = apvts.getRawParameterValue("peakGain")->load();
     settings.peakQuality = apvts.getRawParameterValue("peakQuality")->load();
-    settings.lowCutSlope = apvts.getRawParameterValue("lowcutSlope")->load();
+    settings.lowCutSlope = apvts.getRawParameterValue("lowcutSlope")->load(); 
     settings.highCutSlope = apvts.getRawParameterValue("highcutSlope")->load();
 
     return settings;
