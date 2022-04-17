@@ -11,17 +11,21 @@ std::integral_constant<int, 0> LowCut;
 std::integral_constant<int, 1> Peak;
 std::integral_constant<int, 2> HighCut;
 
-std::integral_constant<int, 0> Slope12;
-std::integral_constant<int, 1> Slope24;
-std::integral_constant<int, 2> Slope36;
-std::integral_constant<int, 3> Slope48;
+enum Slope
+{
+    Slope1, 
+    Slope2,
+    Slope3,
+    Slope4
+};
+     
 
 //creating a structure so that the apvts can pull these values every time it is called, rather than having to write them out over and over.
 struct chainsettings
 {
     float peakFreq{ 0 }, peakGain{ 0 }, peakQuality{ 1.f };
     float lowCutFreq{ 0 }, highCutFreq{ 0 };
-    int lowCutSlope{ Slope12 }, highCutSlope{ Slope12 };
+    Slope lowCutSlope{ Slope::Slope1 }, highCutSlope{ Slope::Slope1 };
 };
 
 chainsettings getchainsettings(juce::AudioProcessorValueTreeState& apvts);
