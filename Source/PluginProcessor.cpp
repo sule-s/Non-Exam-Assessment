@@ -113,7 +113,7 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     // so for x iterations of the filter we need 2x filters
     //as the first slope choice starts from 0, we need 2x+1 filters
     
-    auto lowCutCoefficients = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(getchainSettings.lowCutFreq, getSampleRate(), (getchainSettings.lowCutSlope + 1) * 2);
+    auto lowCutCoefficients = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(getchainSettings.lowCutFreq, sampleRate, (getchainSettings.lowCutSlope + 1) * 2);
 
     auto& RightLowCut = rightChain.get<LowCut>();
     auto& leftLowCut = leftChain.get<LowCut>();
@@ -197,7 +197,7 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 
     }
 
-    auto highCutCoefficients = juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(getchainSettings.highCutFreq, getSampleRate(), (getchainSettings.highCutSlope + 1) * 2);
+    auto highCutCoefficients = juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(getchainSettings.highCutFreq, sampleRate, (getchainSettings.highCutSlope + 1) * 2);
 
     auto& RightHighCut = rightChain.get<HighCut>();
     auto& LeftHighCut = leftChain.get<HighCut>();
