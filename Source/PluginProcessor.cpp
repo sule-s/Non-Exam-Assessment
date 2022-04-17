@@ -124,39 +124,6 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     RightLowCut.setBypassed<2>(true);
     RightLowCut.setBypassed<3>(true);
 
-    switch (getchainSettings.lowCutSlope)
-    {
-        case Slope4:
-        {
-
-            *RightLowCut.get<3>().coefficients = *lowCutCoefficients[3];
-            RightLowCut.setBypassed<3>(false);
-            //[[fallthrough]];
-        }
-
-        case Slope3:
-        {
-
-            *RightLowCut.get<2>().coefficients = *lowCutCoefficients[2];
-            RightLowCut.setBypassed<2>(false);
-            //[[fallthrough]];
-        }
-        case Slope2:
-        {
-
-            *RightLowCut.get<1>().coefficients = *lowCutCoefficients[1];
-            RightLowCut.setBypassed<1>(false);
-            //[[fallthrough]];
-        }
-        case Slope1:
-        {
-            *RightLowCut.get<0>().coefficients = *lowCutCoefficients[0];
-            RightLowCut.setBypassed<0>(false);
-            //[[fallthrough]];
-        }
-        
-
-    }
 
     leftLowCut.setBypassed<0>(true);
     leftLowCut.setBypassed<1>(true);
@@ -167,7 +134,8 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     {
         case Slope4:
         {
-
+            *RightLowCut.get<3>().coefficients = *lowCutCoefficients[3];
+            RightLowCut.setBypassed<3>(false);
             *leftLowCut.get<3>().coefficients = *lowCutCoefficients[3];
             leftLowCut.setBypassed<3>(false);
             [[fallthrough]]; // fallthrough is explicit
@@ -175,20 +143,24 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 
         case Slope3:
         {
-
+            *RightLowCut.get<2>().coefficients = *lowCutCoefficients[2];
+            RightLowCut.setBypassed<2>(false);
             *leftLowCut.get<2>().coefficients = *lowCutCoefficients[2];
             leftLowCut.setBypassed<2>(false);
             [[fallthrough]]; // fallthrough is explicit
         }
         case Slope2:
         {
-
+            *RightLowCut.get<1>().coefficients = *lowCutCoefficients[1];
+            RightLowCut.setBypassed<1>(false);
             *leftLowCut.get<1>().coefficients = *lowCutCoefficients[1];
             leftLowCut.setBypassed<1>(false);
             [[fallthrough]]; // fallthrough is explicit
         }
         case Slope1:
         {
+            *RightLowCut.get<0>().coefficients = *lowCutCoefficients[0];
+            RightLowCut.setBypassed<0>(false);
             *leftLowCut.get<0>().coefficients = *lowCutCoefficients[0];
             leftLowCut.setBypassed<0>(false);
             [[fallthrough]]; // fallthrough is explicit
@@ -207,40 +179,6 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     RightHighCut.setBypassed<2>(true);
     RightHighCut.setBypassed<3>(true);
     
-    switch (getchainSettings.highCutSlope)
-    {
-        case Slope4:
-        {
-
-            *RightHighCut.get<3>().coefficients = *highCutCoefficients[3];
-            RightHighCut.setBypassed<3>(false);
-            //[[fallthrough]];
-        }
-
-        case Slope3:
-        {
-
-            *RightHighCut.get<2>().coefficients = *highCutCoefficients[2];
-            RightHighCut.setBypassed<2>(false);
-            //[[fallthrough]];
-        }
-        case Slope2:
-        {
-
-            *RightHighCut.get<1>().coefficients = *highCutCoefficients[1];
-            RightHighCut.setBypassed<1>(false);
-            //[[fallthrough]];
-        }
-        case Slope1:
-        {
-            *RightHighCut.get<0>().coefficients = *highCutCoefficients[0];
-            RightHighCut.setBypassed<0>(false);
-            //[[fallthrough]];
-        }
-
-
-    }
-
     LeftHighCut.setBypassed<0>(true);
     LeftHighCut.setBypassed<1>(true);
     LeftHighCut.setBypassed<2>(true);
@@ -251,6 +189,8 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
         case Slope4:
         {
 
+            *RightHighCut.get<3>().coefficients = *highCutCoefficients[3];
+            RightHighCut.setBypassed<3>(false);
             *LeftHighCut.get<3>().coefficients = *highCutCoefficients[3];
             LeftHighCut.setBypassed<3>(false);
             //[[fallthrough]];
@@ -258,21 +198,25 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
 
         case Slope3:
         {
-
+            *RightHighCut.get<2>().coefficients = *highCutCoefficients[2];
+            RightHighCut.setBypassed<2>(false);
             *LeftHighCut.get<2>().coefficients = *highCutCoefficients[2];
             LeftHighCut.setBypassed<2>(false);
             //[[fallthrough]];
         }
         case Slope2:
         {
-
+            *RightHighCut.get<1>().coefficients = *highCutCoefficients[1];
+            RightHighCut.setBypassed<1>(false);
             *LeftHighCut.get<1>().coefficients = *highCutCoefficients[1];
             LeftHighCut.setBypassed<1>(false);
             //[[fallthrough]];
         }
         case Slope1:
         {
-            *LeftHighCut.get<0>().coefficients = *highCutCoefficients[0];
+            *RightHighCut.get<0>().coefficients = *highCutCoefficients[0];
+            RightHighCut.setBypassed<0>(false);
+           *LeftHighCut.get<0>().coefficients = *highCutCoefficients[0];
             LeftHighCut.setBypassed<0>(false);
             //[[fallthrough]];
         }
@@ -350,39 +294,6 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     RightLowCut.setBypassed<2>(true);
     RightLowCut.setBypassed<3>(true);
 
-    switch (getchainSettings.lowCutSlope)
-    {
-            case Slope4:
-            {
-
-                *RightLowCut.get<3>().coefficients = *lowCutCoefficients[3];
-                RightLowCut.setBypassed<3>(false);
-                //[[fallthrough]];
-            }
-
-            case Slope3:
-            {
-
-                *RightLowCut.get<2>().coefficients = *lowCutCoefficients[2];
-                RightLowCut.setBypassed<2>(false);
-                //[[fallthrough]];
-            }
-            case Slope2:
-            {
-
-                *RightLowCut.get<1>().coefficients = *lowCutCoefficients[1];
-                RightLowCut.setBypassed<1>(false);
-                //[[fallthrough]];
-            }
-            case Slope1:
-            {
-                *RightLowCut.get<0>().coefficients = *lowCutCoefficients[0];
-                RightLowCut.setBypassed<0>(false);
-                //[[fallthrough]];
-            }
-        
-
-    }
    
     auto& leftLowCut = leftChain.get<LowCut>();
 
@@ -394,7 +305,8 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     {
             case Slope4:
             {
-
+                *RightLowCut.get<3>().coefficients = *lowCutCoefficients[3];
+                RightLowCut.setBypassed<3>(false);
                 *leftLowCut.get<3>().coefficients = *lowCutCoefficients[3];
                 leftLowCut.setBypassed<3>(false);
                 //[[fallthrough]];
@@ -402,20 +314,24 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
             case Slope3:
             {
-
+                *RightLowCut.get<2>().coefficients = *lowCutCoefficients[2];
+                RightLowCut.setBypassed<2>(false);
                 *leftLowCut.get<2>().coefficients = *lowCutCoefficients[2];
                 leftLowCut.setBypassed<2>(false);
                 //[[fallthrough]];
             }
             case Slope2:
             {
-
+                *RightLowCut.get<1>().coefficients = *lowCutCoefficients[1];
+                RightLowCut.setBypassed<1>(false);
                 *leftLowCut.get<1>().coefficients = *lowCutCoefficients[1];
                 leftLowCut.setBypassed<1>(false);
                 //[[fallthrough]];
             }
             case Slope1:
             {
+                *RightLowCut.get<0>().coefficients = *lowCutCoefficients[0];
+                RightLowCut.setBypassed<0>(false);
                 *leftLowCut.get<0>().coefficients = *lowCutCoefficients[0];
                 leftLowCut.setBypassed<0>(false);
                 //[[fallthrough]];
@@ -434,39 +350,6 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     RightHighCut.setBypassed<2>(true);
     RightHighCut.setBypassed<3>(true);
 
-    switch (getchainSettings.highCutSlope)
-    {
-        case Slope4:
-        {
-
-            *RightHighCut.get<3>().coefficients = *highCutCoefficients[3];
-            RightHighCut.setBypassed<3>(false);
-            //[[fallthrough]]; 
-        }
-
-        case Slope3:
-        {
-
-            *RightHighCut.get<2>().coefficients = *highCutCoefficients[2];
-            RightHighCut.setBypassed<2>(false);
-            //[[fallthrough]]; 
-        }
-        case Slope2:
-        {
-
-            *RightHighCut.get<1>().coefficients = *highCutCoefficients[1];
-            RightHighCut.setBypassed<1>(false);
-            //[[fallthrough]]; 
-        }
-        case Slope1:
-        {
-            *RightHighCut.get<0>().coefficients = *highCutCoefficients[0];
-            RightHighCut.setBypassed<0>(false);
-            //[[fallthrough]]; 
-        }
-
-
-    }
 
     LeftHighCut.setBypassed<0>(true);
     LeftHighCut.setBypassed<1>(true);
@@ -477,7 +360,8 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     {
         case Slope4:
         {
-
+            *RightHighCut.get<3>().coefficients = *highCutCoefficients[3];
+            RightHighCut.setBypassed<3>(false);
             *LeftHighCut.get<3>().coefficients = *highCutCoefficients[3];
             LeftHighCut.setBypassed<3>(false);
             //[[fallthrough]];    
@@ -485,20 +369,24 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
         case Slope3:
         {
-
+            *RightHighCut.get<2>().coefficients = *highCutCoefficients[2];
+            RightHighCut.setBypassed<2>(false);
             *LeftHighCut.get<2>().coefficients = *highCutCoefficients[2];
             LeftHighCut.setBypassed<2>(false);
             //[[fallthrough]];    
         }
         case Slope2:
         {
-
+            *RightHighCut.get<1>().coefficients = *highCutCoefficients[1];
+            RightHighCut.setBypassed<1>(false);
             *LeftHighCut.get<1>().coefficients = *highCutCoefficients[1];
             LeftHighCut.setBypassed<1>(false);
             //[[fallthrough]];    
         }
         case Slope1:
         {
+            *RightHighCut.get<0>().coefficients = *highCutCoefficients[0];
+            RightHighCut.setBypassed<0>(false);
             *LeftHighCut.get<0>().coefficients = *highCutCoefficients[0];
             LeftHighCut.setBypassed<0>(false);
             //[[fallthrough]];
