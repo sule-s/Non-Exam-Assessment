@@ -44,5 +44,16 @@ private:
     RotarySlider lowCutSlopeSlider;
     RotarySlider highCutSlopeSlider;
 
+
+    
+    juce::AudioProcessorValueTreeState::SliderAttachment peakFreqAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment peakGainAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment peakQualityAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment lowCutFreqAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment highCutFreqAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment lowCutSlopeAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment highCutSlopeAttachment;
+
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EQAudioProcessorEditor)
 }; 

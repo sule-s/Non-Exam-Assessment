@@ -425,7 +425,7 @@ chainsettings getchainsettings(juce::AudioProcessorValueTreeState& apvts)
     settings.peakGain = apvts.getRawParameterValue("peakGain")->load();
     settings.peakQuality = apvts.getRawParameterValue("peakQuality")->load();
     settings.lowCutSlope = static_cast<Slope>(apvts.getRawParameterValue("lowcutSlope")->load()); 
-    settings.highCutSlope = static_cast<Slope>(apvts.getRawParameterValue("highcutSlope")->load());
+    settings.highCutSlope = static_cast <Slope>(apvts.getRawParameterValue("highcutSlope")->load());
 
     return settings;
 }

@@ -9,10 +9,19 @@
 
 //==============================================================================
 EQAudioProcessorEditor::EQAudioProcessorEditor(EQAudioProcessor& p)
-    : AudioProcessorEditor(&p), audioProcessor(p)
+    : AudioProcessorEditor(&p), audioProcessor(p),
+peakFreqAttachment(audioProcessor.apvts, "peakFreq", peakFreqSlider),
+peakGainAttachment(audioProcessor.apvts, "peakGain", peakGainSlider),
+peakQualityAttachment(audioProcessor.apvts, "peakQaulity", peakQualitySlider),
+lowCutSlopeAttachment(audioProcessor.apvts, "lowCutSlope", lowCutSlopeSlider),
+highCutSlopeAttachment(audioProcessor.apvts, "highCutSlope", highCutSlopeSlider),
+lowCutFreqAttachment(audioProcessor.apvts, "lowCutFreq", lowCutFreqSlider),
+highCutFreqAttachment(audioProcessor.apvts, "highCutFreq", highCutFreqSlider)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
+
+
     addAndMakeVisible(lowCutSlopeSlider);
     addAndMakeVisible(highCutSlopeSlider);
     addAndMakeVisible(highCutFreqSlider);
@@ -67,7 +76,7 @@ void EQAudioProcessorEditor::resized()
     lowCutFreqSlider.setBounds(lowCutFreqArea);
     highCutFreqSlider.setBounds(highCutFreqArea); 
 
-    lowCutSlopeSlider.setBounds(lowCutSlopeArea);
+    lowCutSlopeSlider.setBounds(lowCutSlopeArea );
     highCutSlopeSlider.setBounds(highCutSlopeArea);
     
     peakFreqSlider.setBounds(peakFreqArea);
