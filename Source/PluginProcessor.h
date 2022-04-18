@@ -7,9 +7,9 @@
 
 #include <JuceHeader.h>
 
-std::integral_constant<int, 0> LowCut;
-std::integral_constant<int, 1> Peak;
-std::integral_constant<int, 2> HighCut;
+const std::integral_constant<int, 0> LowCut;
+const std::integral_constant<int, 1> Peak;
+const std::integral_constant<int, 2> HighCut;
 
 enum Slope
 {

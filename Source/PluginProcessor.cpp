@@ -118,12 +118,10 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
     auto& RightLowCut = rightChain.get<LowCut>();
     auto& leftLowCut = leftChain.get<LowCut>();
 
-
     RightLowCut.setBypassed<0>(true);
     RightLowCut.setBypassed<1>(true);
     RightLowCut.setBypassed<2>(true);
     RightLowCut.setBypassed<3>(true);
-
 
     leftLowCut.setBypassed<0>(true);
     leftLowCut.setBypassed<1>(true);
@@ -165,8 +163,6 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
             leftLowCut.setBypassed<0>(false);
             [[fallthrough]]; // fallthrough is explicit
         }
-        
-
     }
 
     auto highCutCoefficients = juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(getchainSettings.highCutFreq, sampleRate, (getchainSettings.highCutSlope + 1) * 2);
@@ -220,12 +216,7 @@ void EQAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock)
             LeftHighCut.setBypassed<0>(false);
             //[[fallthrough]];
         }
-
-
     }
-
-
-
 }
 
 void EQAudioProcessor::releaseResources()
@@ -293,8 +284,7 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     RightLowCut.setBypassed<1>(true);
     RightLowCut.setBypassed<2>(true);
     RightLowCut.setBypassed<3>(true);
-
-   
+  
     auto& leftLowCut = leftChain.get<LowCut>();
 
     leftLowCut.setBypassed<0>(true);
@@ -335,9 +325,7 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
                 *leftLowCut.get<0>().coefficients = *lowCutCoefficients[0];
                 leftLowCut.setBypassed<0>(false);
                 //[[fallthrough]];
-            }
-        
-
+            }      
     }
     
     auto highCutCoefficients = juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(getchainSettings.highCutFreq, getSampleRate(), (getchainSettings.highCutSlope + 1) * 2);
@@ -349,7 +337,6 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
     RightHighCut.setBypassed<1>(true);
     RightHighCut.setBypassed<2>(true);
     RightHighCut.setBypassed<3>(true);
-
 
     LeftHighCut.setBypassed<0>(true);
     LeftHighCut.setBypassed<1>(true);
@@ -391,8 +378,6 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
             LeftHighCut.setBypassed<0>(false);
             //[[fallthrough]];
         }
-
-
     }
     
     juce::dsp::AudioBlock<float> block(buffer);
@@ -405,8 +390,6 @@ void EQAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::Midi
 
     leftChain.process(leftContextReplacing);
     rightChain.process(rightContextReplacing);
-
-
     
 }
 //==============================================================================
@@ -416,8 +399,8 @@ bool EQAudioProcessor::hasEditor() const
 }
 juce::AudioProcessorEditor* EQAudioProcessor::createEditor()
 {
-    //    return new EQAudioProcessorEditor (*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+      return new EQAudioProcessorEditor (*this);
+    //return new juce::GenericAudioProcessorEditor(*this);
 }
 //==============================================================================
 void EQAudioProcessor::getStateInformation(juce::MemoryBlock& destData)
