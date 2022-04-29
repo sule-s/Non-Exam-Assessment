@@ -11,12 +11,12 @@
 
 struct RotarySlider : juce::Slider
 {
-    RotarySlider() : juce::Slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag, juce::Slider::TextEntryBoxPosition::NoTextBox)
+    RotarySlider() : juce::Slider(juce::Slider::SliderStyle::RotaryHorizontalVerticalDrag, juce::Slider::TextEntryBoxPosition::TextBoxAbove)
     {
-
-
+        bool stopAtEnd = true;
     }
 };
+
 
 //==============================================================================
 /**
@@ -31,6 +31,9 @@ public:
     void paint(juce::Graphics&) override;
     void resized() override;
 
+
+
+
 private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
@@ -44,16 +47,15 @@ private:
     RotarySlider lowCutSlopeSlider;
     RotarySlider highCutSlopeSlider;
 
-
-    
+    juce::AudioProcessorValueTreeState::SliderAttachment highCutSlopeAttachment;
+    juce::AudioProcessorValueTreeState::SliderAttachment lowCutSlopeAttachment;
     juce::AudioProcessorValueTreeState::SliderAttachment peakFreqAttachment;
     juce::AudioProcessorValueTreeState::SliderAttachment peakGainAttachment;
     juce::AudioProcessorValueTreeState::SliderAttachment peakQualityAttachment;
     juce::AudioProcessorValueTreeState::SliderAttachment lowCutFreqAttachment;
     juce::AudioProcessorValueTreeState::SliderAttachment highCutFreqAttachment;
-    juce::AudioProcessorValueTreeState::SliderAttachment lowCutSlopeAttachment;
-    juce::AudioProcessorValueTreeState::SliderAttachment highCutSlopeAttachment;
+    
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EQAudioProcessorEditor)
-}; 
+};

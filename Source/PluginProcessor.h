@@ -13,12 +13,12 @@ const std::integral_constant<int, 2> HighCut;
 
 enum Slope
 {
-    Slope1, 
+    Slope1,
     Slope2,
     Slope3,
     Slope4
 };
-     
+
 
 //creating a structure so that the apvts can pull these values every time it is called, rather than having to write them out over and over.
 struct chainsettings
@@ -81,7 +81,7 @@ private:
     //to play concurrently will result in stereo sound
 
     SingleChain leftChain, rightChain;
-   
+
 
 
     //==============================================================================
